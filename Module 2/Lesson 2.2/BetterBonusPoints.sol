@@ -13,17 +13,17 @@ contract BetterBonusPoints is Ownable {
     mapping (address => bool) private _isUser;
     address[] private _users;
 
-    mapping (address => uint) private TotalEarnedPoints;
-    mapping (address => uint) private TotalSpentPoints;
+    mapping (address => uint) private _totalEarnedPoints;
+    mapping (address => uint) private _totalSpentPoints;
 
     function getTotalEarnedPoints(address _user) private view returns(uint256) {
         require(_isUser[_user] == true, "there is no user with this address");
-        return TotalEarnedPoints[_user];
+        return _totalEarnedPoints[_user];
     }
 
     function getTotalSpentPoints(address _user) private view returns(uint256) {
         require(_isUser[_user] == true, "there is no user with this address");
-        return TotalSpentPoints[_user];
+        return _totalSpentPoints[_user];
     }
 
     function getCurrentBalance(address _user) public view returns(uint256) {
@@ -37,14 +37,14 @@ contract BetterBonusPoints is Ownable {
             require(_isUser[_user] == true, "there is no user with this address");
             uint256 currentBalance = getCurrentBalance(_user);
             require(currentBalance >= uint256(-_value), "user doesn't have enough points to spent");
-            TotalSpentPoints[_user] += uint256(-_value);
+            _totalSpentPoints[_user] += uint256(-_value);
             emit BurnPoints(_user, uint(-_value));
         } else {
             if (_isUser[_user] == false) {
                 _isUser[_user] = true;
                 _users.push(_user);
             }
-            TotalEarnedPoints[_user] += uint256(_value);
+            _totalEarnedPoints[_user] += uint256(_value);
             emit EarnPoints(_user, uint256(_value));
         }
     }
@@ -52,8 +52,8 @@ contract BetterBonusPoints is Ownable {
     function movePoints(address _to, uint256 _value) external {
         uint256 currentBalance = getCurrentBalance(msg.sender);
         require(currentBalance >= _value, "you don't have enough points to move");
-        TotalSpentPoints[msg.sender] += _value;
-        TotalEarnedPoints[_to] += _value;
+        _totalSpentPoints[msg.sender] += _value;
+        _totalEarnedPoints[_to] += _value;
         emit MovePoints(msg.sender, _to, _value);
     }
 
@@ -61,7 +61,7 @@ contract BetterBonusPoints is Ownable {
         for (uint256 i = 0; i < _users.length; i++) {
             uint256 currentBalance = getCurrentBalance(_users[i]);
             if (currentBalance > 0) {
-                TotalSpentPoints[_users[i]] += currentBalance;
+                _totalSpentPoints[_users[i]] += currentBalance;
             }
         }
     }
