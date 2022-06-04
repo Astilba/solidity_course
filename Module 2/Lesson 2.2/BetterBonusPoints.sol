@@ -6,15 +6,15 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract BetterBonusPoints is Ownable {
 
-    event EarnPoints(address user, uint value);
-    event MovePoints(address from, address _to, uint value);
-    event BurnPoints(address user, uint value);
+    event EarnPoints(address user, uint256 value);
+    event MovePoints(address from, address _to, uint256 value);
+    event BurnPoints(address user, uint256 value);
 
     mapping (address => bool) private _isUser;
     address[] private _users;
 
-    mapping (address => uint) private _totalEarnedPoints;
-    mapping (address => uint) private _totalSpentPoints;
+    mapping (address => uint256) private _totalEarnedPoints;
+    mapping (address => uint256) private _totalSpentPoints;
 
     function getTotalEarnedPoints(address _user) private view returns(uint256) {
         require(_isUser[_user] == true, "there is no user with this address");
